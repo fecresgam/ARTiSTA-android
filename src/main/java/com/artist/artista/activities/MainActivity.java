@@ -1,4 +1,4 @@
-package com.artist.artista;
+package com.artist.artista.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,31 +8,56 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import com.artist.TransportScheduleDAO;
+import com.artist.artista.R;
 
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
+    private TextView mTvTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_main);
+
+        mTvTime = (TextView) findViewById(R.id.textviev_time);
 
 
-        Long time;
+        mTvTime.setText(loadTime());
+
+
+
+
+        Button buttonRefresh = (Button) findViewById(R.id.button_refresh);
+        buttonRefresh.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v)
+            {
+                mTvTime.setText(loadTime());
+            }
+        });
+
+
+
+
+    }
+
+    private String loadTime()
+    {
+        String time = "";
         final List<Long> list = TransportScheduleDAO.INSTANCE.findNext();
         if (list.size() > 0)
         {
-            time = list.get(0);
+            time = list.get(0).toString();
         }
 
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
+        return time;
     }
 
 
