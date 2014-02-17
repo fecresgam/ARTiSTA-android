@@ -1,4 +1,4 @@
-package com.artist.artista.activities;
+package com.artist.artista;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import com.artist.TransportScheduleDAO;
-import com.artist.artista.R;
 
 import java.util.List;
 
