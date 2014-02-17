@@ -1,6 +1,7 @@
 package com.artist.artista.activities;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -27,37 +28,42 @@ public class MainActivity extends ActionBarActivity {
         mTvTime = (TextView) findViewById(R.id.textviev_time);
 
 
-        mTvTime.setText(loadTime());
-
-
-
-
         Button buttonRefresh = (Button) findViewById(R.id.button_refresh);
         buttonRefresh.setOnClickListener(new View.OnClickListener()
         {
-
             @Override
             public void onClick(View v)
             {
-                mTvTime.setText(loadTime());
+                startCountdown();
             }
         });
 
 
+        startCountdown();
 
 
     }
 
-    private String loadTime()
+
+
+    private void startCountdown()
     {
-        String time = "";
+        MyCount counter = new MyCount(loadTime() * 1000, 1000);
+        counter.start();
+    }
+
+
+    private Long loadTime()
+    {
+        Long result = null;
+
         final List<Long> list = TransportScheduleDAO.INSTANCE.findNext();
         if (list.size() > 0)
         {
-            time = list.get(0).toString();
+            result = list.get(0);
         }
 
-        return time;
+        return result;
     }
 
 
@@ -94,6 +100,26 @@ public class MainActivity extends ActionBarActivity {
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
+        }
+    }
+
+
+    // countdowntimer is an abstract class, so extend it and fill in methods
+    public class MyCount extends CountDownTimer
+    {
+        public MyCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+
+        @Override
+        public void onFinish() {
+            mTvTime.setText("--");
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            mTvTime.setText("Left: " + millisUntilFinished / 1000);
         }
     }
 
