@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:text="--"
             android:id="@+id/textviev_time" android:layout_below="@+id/textView" android:layout_alignRight="@+id/button_refresh"
             android:layout_alignEnd="@+id/button_refresh" android:layout_marginTop="35dp"/>
 
