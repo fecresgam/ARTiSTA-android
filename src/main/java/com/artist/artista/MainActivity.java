@@ -13,58 +13,91 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.artist.vo.ArrivalData;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends ActionBarActivity {
 
+    private HashMap<String, TextView> textViews = new HashMap<String, TextView>();
+    private HashMap<String, MyCount> counters = new HashMap<String, MyCount>();
+    private HashMap<String, Button> buttons = new HashMap<String, Button>();
+
+    /*
     private TextView mTvTime;
     private MyCount counter;
+*/
+
+    public static final String FAKE_KEY1 = "1";
+    public static final String FAKE_KEY2 = "2";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_main);
 
-        mTvTime = (TextView) findViewById(R.id.textviev_time);
 
 
-        Button buttonRefresh = (Button) findViewById(R.id.button_refresh);
-        buttonRefresh.setOnClickListener(new View.OnClickListener()
+        // 1
+        textViews.put(FAKE_KEY1, (TextView) findViewById(R.id.textviev_time1));
+        Button button = (Button) findViewById(R.id.button_refresh1);
+        button.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                startCountdown();
+                startCountdown(FAKE_KEY1);
             }
         });
+        buttons.put(FAKE_KEY1, button);
+
+
+        // 2
+        textViews.put(FAKE_KEY2, (TextView) findViewById(R.id.textviev_time2));
+        button = (Button) findViewById(R.id.button_refresh2);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startCountdown(FAKE_KEY2);
+            }
+        });
+        buttons.put(FAKE_KEY2, button);
+
+
+
 
 
         //Iniciarse al principio
         //startCountdown();
 
 
-        //TODO fcres: Gestionar cuando el timepo es = 0
+        //TODO fcres: Gestionar cuando el timepo es = 0 ¿30 seg?
     }
 
 
 
-    private void startCountdown()
+    private void startCountdown(final String key)
     {
+        MyCount counter = counters.get(key);
+
         if (counter != null)
         {
             counter.cancel();
         }
-        final Long totalTime = loadTime();
+        final Long totalTime = loadTime(key);
         if (totalTime != null)
         {
-            counter = new MyCount(totalTime * 1000, 1000);
+            counter = new MyCount(key, totalTime);
+            counters.put(key, counter);
             counter.start();
         }
     }
 
 
-    private Long loadTime()
+    private Long loadTime(final String key)
     {
         Long result = null;
 
@@ -72,7 +105,7 @@ public class MainActivity extends ActionBarActivity {
         final List<ArrivalData> list;
         try
         {
-            list = new RetrieveTimeDataTask().execute(null).get();
+            list = new RetrieveTimeDataTask().execute(key).get();
 
             if (list.size()>0)
             {
@@ -137,19 +170,43 @@ public class MainActivity extends ActionBarActivity {
     // countdowntimer is an abstract class, so extend it and fill in methods
     public class MyCount extends CountDownTimer
     {
-        public MyCount(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
+        final private String key;
+
+        public MyCount(final String aKey, final long secondsToCount) {
+            super(secondsToCount * 1000, 1000);
+            this.key = aKey;
         }
 
 
         @Override
         public void onFinish() {
-            mTvTime.setText("--");
+            textViews.get(key).setText("--");
         }
 
         @Override
         public void onTick(long millisUntilFinished) {
-            mTvTime.setText("" + millisUntilFinished / 1000);
+  /*
+            if (millisUntilFinished < 30000)
+            {
+                if ((millisUntilFinished / 1000) % 2 == 0)
+                {
+                    textViews.get(key).setText("> ");
+                }
+                else
+                {
+                    textViews.get(key).setText(" >");
+                }
+                textViews.get(key).setText(">>");
+
+            }
+            else
+            {
+                textViews.get(key).setText("" + millisUntilFinished / 1000);
+            }
+*/
+            //textViews.get(key).setText("" + millisUntilFinished / 60000);
+            textViews.get(key).setText("" + millisUntilFinished / 1000);
+
         }
 
 
